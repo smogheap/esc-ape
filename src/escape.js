@@ -58,9 +58,11 @@ function start() {
 	APE.scene = new penduinSCENE(APE.canvas, APE.width, APE.height,
 								 tick, 60);
 	APE.scene.showFPS(true);
+
 	APE.scene.addOBJ(APE.thing.ape, "ape");
 	APE.thing.ape.x = (APE.width / 2);
 	APE.thing.ape.y = (APE.height / 2);
+	console.log(APE.thing.ape.$);
 
 	APE.scene.addOBJ(APE.thing.miniape, "miniape");
 	APE.thing.miniape.x = 0;
@@ -68,6 +70,10 @@ function start() {
 
 	APE.scene.setBG("#006800");
 
+	var text = new penduinTEXT("################", 200, "white", false, false, true);
+	APE.scene.addTEXT(text, "hashes");
+	text.y = -80;
+	
 	//APE.scene.setVignette("image/scribble/vign01.png");
 	//APE.scene.setGhost(0.75);
 	//APE.scene.setGlow(0.6, 6);

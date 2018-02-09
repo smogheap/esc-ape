@@ -25,10 +25,13 @@ function ape_test(ape, time) {
 		ape.addTags("lclose");
 	}
 
-	ape.$["body-back"].offset.y = cos150 * 200 + 0;
-	ape.$["body-front"].offset.y = cos150 * 200 + 0;
-	ape.$["arm-l"].offset.y = cos150 * 200 - 130;
-	ape.$["arm-r"].offset.y = cos150 * 200 - 130;
+	ape.$["dummy-body"].offset.y = cos150 * 200 + 0;
+	ape.$["dummy-body"].offset.x = sin150 * 200 + 0;
+//	ape.$["body-back"].offset.y = cos150 * 200 + 0;
+//	ape.$["body-front"].offset.y = cos150 * 200 + 0;
+//	ape.$["arm-l"].offset.y = cos150 * 200 - 130;
+//	ape.$["arm-r"].offset.y = cos150 * 200 - 130;
+	
 	
 	ape.$["arm-r"].rotate = sin300 * 50 + 140;
 	ape.$["arm-l"].rotate = sin300 * -50 - 10;

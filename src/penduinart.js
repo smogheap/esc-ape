@@ -57,6 +57,8 @@ function penduinOBJ(obj, cb) {
 					}.bind(this), false);
 					//document.body.appendChild(img);
 				}
+			} else {
+				$[part[i].name] = part[i];
 			}
 
 			loadPart.bind(this)([].concat(part[i].above || [],

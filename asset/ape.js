@@ -4,6 +4,15 @@ LOAD({
 
 	"above": [
 		{
+			"name": "dummy-body",
+			"pivot": { "x": 0, "y": 0 },
+			"rotate": 0,
+			"scale": 1,
+			"alpha": 1,
+			"offset": { "x": 0, "y": 0 },
+	
+	"above": [
+		{
 			"name": "arm-r",
 			"image": "gpx/ape-arm-r.png",
 			"pivot": {
@@ -435,5 +444,7 @@ LOAD({
 			"below": []
 		}
 	],
-	"pose": {}
+			"pose": {}
+		}
+	]
 });
