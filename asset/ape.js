@@ -299,7 +299,25 @@ LOAD({
 //				"x": 760.0000000000005,
 //				"y": 359.99999999999983
 			},
-			"above": [],
+			"above": [
+				{
+					"name": "leg-r-back",
+					"image": "gpx/ape-leg-r-back.png",
+					"pivot": {
+						"x": 65,
+						"y": 39
+					},
+					"rotate": 15,
+					"scale": 1,
+					"alpha": 1,
+					"offset": {
+						"x": 166.6666666666665,
+						"y": 323.33333333333366
+					},
+					"above": [],
+					"below": []
+				}
+			],
 			"below": [
 				{
 					"name": "head-back",
@@ -334,24 +352,9 @@ LOAD({
 					},
 					"above": [],
 					"below": []
-				},
-				{
-					"name": "leg-r-back",
-					"image": "gpx/ape-leg-r-back.png",
-					"pivot": {
-						"x": 65,
-						"y": 39
-					},
-					"rotate": 15,
-					"scale": 1,
-					"alpha": 1,
-					"offset": {
-						"x": 166.6666666666665,
-						"y": 323.33333333333366
-					},
-					"above": [],
-					"below": []
 				}
+
+				
 			]
 		},
 		{
