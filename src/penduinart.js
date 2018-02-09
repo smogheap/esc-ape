@@ -124,8 +124,20 @@ function penduinOBJ(obj, cb) {
 		if(part.scale) {
 			ctx.scale(part.scale, part.scale);
 		}
+		if(part.scalex) {
+			ctx.scale(part.scalex, 1);
+		}
+		if(part.scaley) {
+			ctx.scale(1, part.scaley);
+		}
 		if(part._scale) {
 			ctx.scale(part._scale, part._scale);
+		}
+		if(part._scalex) {
+			ctx.scale(part._scalex, 1);
+		}
+		if(part._scaley) {
+			ctx.scale(1, part._scaley);
 		}
 		if(part.flipx) {
 			ctx.scale(-1, 1);

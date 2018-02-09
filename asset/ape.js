@@ -11,7 +11,7 @@ LOAD({
 				"y": 37
 			},
 			"rotate": 24,
-			"scale": 1,
+			"scale": 0.8,
 			"alpha": 1,
 			"offset": {
 				"x": 673-760,
@@ -43,9 +43,9 @@ LOAD({
 							"tag": "back",
 							"pivot": { "x": 0, "y": 0 },
 							"rotate": 0,
-							"scale": 1,
+							"scale": 1.25,
 							"alpha": 1,
-							"offset": { "x": 0, "y": 0 },
+							"offset": { "x": -20, "y": -90 },
 							"below": [
 								{
 									"name": "hand-closed-r-back",
@@ -90,9 +90,9 @@ LOAD({
 							"tag": "front",
 							"pivot": { "x": 0, "y": 0 },
 							"rotate": 0,
-							"scale": 1,
+							"scale": 1.25,
 							"alpha": 1,
-							"offset": { "x": 0, "y": 0 },
+							"offset": { "x": -20, "y": -90 },
 							"below": [
 								{
 									"name": "hand-closed-r-front",
@@ -147,7 +147,7 @@ LOAD({
 				"y": 282
 			},
 			"rotate": 58,
-			"scale": 1,
+			"scale": 0.8,
 			"alpha": 1,
 			"offset": {
 				"x": 816-760,
@@ -179,9 +179,9 @@ LOAD({
 							"tag": "back",
 							"pivot": { "x": 0, "y": 0 },
 							"rotate": 0,
-							"scale": 1,
+							"scale": 1.25,
 							"alpha": 1,
-							"offset": { "x": 0, "y": 0 },
+							"offset": { "x": -50, "y": 0 },
 							"below": [
 								{
 									"name": "hand-closed-l-back",
@@ -226,9 +226,9 @@ LOAD({
 							"tag": "front",
 							"pivot": { "x": 0, "y": 0 },
 							"rotate": 0,
-							"scale": 1,
+							"scale": 1.25,
 							"alpha": 1,
-							"offset": { "x": 0, "y": 0 },
+							"offset": { "x": -50, "y": 0 },
 							"below": [
 								{
 									"name": "hand-closed-l-front",
@@ -347,7 +347,7 @@ LOAD({
 		},
 		{
 			"name": "body-front",
-			"image": "gpx/ape-body-front.png",
+			"image": "gpx/ape-body-front-fur.png",
 			"tag": "front",
 			"pivot": {
 				"x": 153,
@@ -363,6 +363,23 @@ LOAD({
 //				"y": 350.0000000000005
 			},
 			"above": [
+				{
+					"name": "body-front-skin",
+					"image": "gpx/ape-body-front-skin.png",
+					"pivot": {
+						"x": 118,
+						"y": 238
+					},
+					"rotate": 0,
+					"scale": 1,
+					"alpha": 1,
+					"offset": {
+						"x": 118,
+						"y": 238
+					},
+					"above": [],
+					"below": []
+				},
 				{
 					"name": "head-front",
 					"image": "gpx/ape-head-front.png",

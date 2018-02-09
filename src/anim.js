@@ -54,6 +54,11 @@ function ape_test(ape, time) {
 	ape.$["leg-l-back"].rotate = sin300 * 40 + 70;
 	ape.$["leg-l-front"].rotate = sin300 * 40 + 70;
 
+	ape.$["body-front-skin"].offset.x = sin300 * 120 + 240;
+	ape.$["body-front-skin"].scalex = Math.min(-sin300 * 2, 1);
+	ape.$["body-front-skin"].rotate = sin300 * 15 + 15;
+
+
 	
 	/*
 	ape.$.body._offset.x =  cos300 * 14;
