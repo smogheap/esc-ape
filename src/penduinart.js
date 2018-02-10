@@ -906,6 +906,7 @@ function penduinSCENE(canvas, logicWidth, logicHeight,
 		if(bg) {
 			delete bgcanv[name];
 		}
+		redrawbg = true;
 		return bg;
 	};
 	// remove (and return) all scene backgrounds
@@ -918,14 +919,19 @@ function penduinSCENE(canvas, logicWidth, logicHeight,
 			if(bg) {
 				removed.push(backgrounds[key]);
 				bg.scene = null;
+				console.log("bg before", backgrounds);
 				delete backgrounds[key];
+				console.log("bg after", backgrounds);
 			}
 			bg = bgcanv[key] || null;
 			if(bg) {
+				console.log("bgcanv before", backgrounds);
 				delete bgcanv[key];
+				console.log("bgcanv after", backgrounds);
 			}
 			return true;
 		});
+		redrawbg = true;
 		return removed;
 	}
 

@@ -6,6 +6,7 @@ APE = {
 	thing: {},
 	scene: null,
 	transition: null,
+	transitionIn: false,
 	transitionOut: false,
 	mode: "title",  //"menu", "game", "credits"
 	nextMode: "title",
@@ -36,6 +37,8 @@ function animate(time) {
 
 function handleinput(time) {
 	switch(APE.mode) {
+	case "menu":
+		break;
 	case "title":
 	default:
 		if(APE.input) {
@@ -60,13 +63,19 @@ function tick(scene, time) {
 	case "menu":
 		animate(time);
 	};
+	if(APE.transitionIn) {
+		APE.transitionIn = false;
+		console.log("here i go");
+		APE.scene.transition(APE.transition, false,
+							 APE.width / 2, APE.height / 2);
+	}
 }
 
 function transitionEnd() {
 	//set up next scene etc
 	if(APE.transitionOut) {
 		APE.scene.removeOBJs();
-		//APE.scene.removeBGs();
+		APE.scene.removeBGs();
 		APE.mode = APE.nextMode;
 		switch(APE.mode) {
 		default:
@@ -77,8 +86,7 @@ function transitionEnd() {
 			initMenu();
 			break;
 		}
-		APE.scene.transition(APE.transition, !APE.transitionOut,
-							 APE.width / 2, APE.height / 2);
+		APE.transitionIn = true;
 	}
 	console.log("end", APE.transitionOut, APE.acceptInput);
 	APE.transitionOut = !APE.transitionOut;
@@ -175,16 +183,20 @@ window.addEventListener("load", function() {
 
 window.addEventListener("click", function() {
 });
-window.addEventListener("mousedown", function() {
+function mousedown(e) {
 	if(APE.acceptInput) {
 		APE.input = true;
 	}
-});
-window.addEventListener("mouseup", function() {
+}
+function mouseup(e) {
 	if(APE.acceptInput) {
 		APE.input = false;
 	}
-});
+}
+window.addEventListener("mousedown", mousedown);
+window.addEventListener("touchstart", mousedown);
+window.addEventListener("mouseup", mouseup);
+window.addEventListener("touchend", mouseup);
 
 function handlekey(event, down) {
 	if(!APE.acceptInput) {
