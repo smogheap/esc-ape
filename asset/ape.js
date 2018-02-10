@@ -1,6 +1,6 @@
 LOAD({
 	"name": "ape",
-	"scale": 0.5,
+	"scale": 0.1,
 
 	"above": [
 		{
@@ -200,7 +200,7 @@ LOAD({
 										"x": 70,
 										"y": 164
 									},
-									"rotate": 0,
+									"rotate": 30,
 									"scale": 1,
 									"alpha": 1,
 									"offset": {

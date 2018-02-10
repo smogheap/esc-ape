@@ -9,6 +9,7 @@ function penduinOBJ(obj, cb) {
 	/* consumer-available stuff */
 	this.x = obj.x;
 	this.y = obj.y;
+	this.scale = 1;
 	this.obj = obj;
 	this.$ = {};  // hash of part names for direct manipulation
 
@@ -123,6 +124,7 @@ function penduinOBJ(obj, cb) {
 		}
 
 		ctx.scale(scale || 1, scale || 1);
+		ctx.scale(this.scale, this.scale);
 		if(part.scale) {
 			ctx.scale(part.scale, part.scale);
 		}
@@ -819,6 +821,11 @@ function penduinSCENE(canvas, logicWidth, logicHeight,
 			ctx.restore();
 		}
 
+		// draw any texts
+		for(i in texts) {
+			texts[i].draw(ctx, scale, time);
+		}
+
 		// draw any active transition
 		if(trans.fx) {
 			if(!trans.start) {
@@ -828,10 +835,6 @@ function penduinSCENE(canvas, logicWidth, logicHeight,
 				trans.fx = null;
 				trans.start = 0;
 			}
-		}
-
-		for(i in texts) {
-			texts[i].draw(ctx, scale, time);
 		}
 
 		if(showfps) {
