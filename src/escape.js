@@ -15,6 +15,7 @@ APE = {
 	lastKey: null,
 	grabLeft: false,
 	showDebug: false,
+	lastGamepadState: null,
 	anchor: {
 		x: -1,
 		y: -1
@@ -39,7 +40,7 @@ if(!console) {
 	console = {
 		log: function() {},
 		error: function() {}
-	}
+	};
 }
 function combineCallbacks(cbList, resultsVary, cb) {
 	var results = [];
@@ -166,7 +167,45 @@ function animateCredits(time) {
 	APE.thing.creditsbg.$.sky.rotate = time / 360;
 }
 
+/* Simply detect if any button has changed state */
+function pollGamepad() {
+	let gamepads;
+	let prev;
+
+	if (navigator.getGamepads) {
+		gamepads = navigator.getGamepads();
+	} else if (navigator.webkitGetGamepads) {
+		gamepads = navigator.webkitGetGamepads();
+	} else {
+		gamepads = [];
+	}
+
+	if (!gamepads[0]) {
+		return;
+	}
+
+	prev = [];
+	for (let g = 0, pad; pad = gamepads[g]; g++) {
+		prev[g] = [];
+
+		for (let b = 0, btn; btn = pad.buttons[b]; b++) {
+			if (APE.lastGamepadState &&
+				APE.lastGamepadState[g] &&
+				APE.lastGamepadState[g][b] !== btn.pressed
+			) {
+				APE.input = true;
+			}
+
+			prev[g][b] = btn.pressed;
+		}
+	}
+
+	APE.lastGamepadState = prev;
+}
+
 function handleinput(time) {
+	pollGamepad();
+
 	switch(APE.mode) {
 	case "menu":
 	case "game":
@@ -366,6 +405,7 @@ window.addEventListener("mousedown", newInput);
 window.addEventListener("mouseup", newInput);
 window.addEventListener("touchend", newInput);
 window.addEventListener("touchstart", newInput);
+window.addEventListener("gamepadconnected", pollGamepad);
 
 /*
 window.addEventListener("click", function() {
