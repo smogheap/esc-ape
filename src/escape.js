@@ -4,7 +4,13 @@ APE = {
 	height: 1080,
 	json: {},
 	thing: {},
-	scene: null
+	scene: null,
+	transition: null,
+	transitionOut: false,
+	mode: "title",  //"menu", "game", "credits"
+	nextMode: "title",
+	acceptInput: false,
+	input: false
 };
 function LOAD(json) {
 	var data = json;
@@ -21,7 +27,6 @@ if(!console) {
 
 function animate(time) {
 	ape_test(APE.thing.ape, time);
-	
 	ape_test(APE.thing.miniape, time + 500);
 	APE.thing.miniape.x += 3;
 	if(APE.thing.miniape.x > APE.width) {
@@ -29,36 +34,62 @@ function animate(time) {
 	}
 }
 
-function spititem() {
-	if(isempty(APE.pos.x, APE.pos.y) && isempty(APE.pos.x, APE.pos.y - 1)) {
-		if(APE.inv.bub) {
-			APE.inv.bub--;
-			inventory();
-			APE.anim = APE.action = "spitbub";
-		} else if(APE.inv.key) {
-			APE.inv.key--;
-			inventory();
-			APE.anim = APE.action = "spitkey";
+function handleinput(time) {
+	switch(APE.mode) {
+	case "title":
+	default:
+		if(APE.input) {
+			APE.input = false;
+			APE.nextMode = "menu";
+			APE.acceptInput = false;
+			APE.scene.transition(APE.transition, APE.transitionOut,
+								 APE.width / 2, APE.height / 2);
+			console.log("there", APE.nextMode, APE.acceptInput);
 		}
 	}
 }
 
-function handleinput(time) {
-}
-
 function tick(scene, time) {
-	handleinput(time);
-	animate(time);
+	if(APE.acceptInput) {
+		handleinput(time);
+	}
+	switch(APE.mode) {
+	case "title":
+	default:
+		break;
+	case "menu":
+		animate(time);
+	};
+}
+
+function transitionEnd() {
+	//set up next scene etc
+	if(APE.transitionOut) {
+		APE.scene.removeOBJs();
+		APE.scene.removeBGs();
+		APE.mode = APE.nextMode;
+		switch(APE.mode) {
+		default:
+		case "title":
+			initTitle();
+			break;
+		case "menu":
+			initMenu();
+			break;
+		}
+		APE.scene.transition(APE.transition, !APE.transitionOut,
+							 APE.width / 2, APE.height / 2);
+	}
+	console.log("end", APE.transitionOut, APE.acceptInput);
+	APE.transitionOut = !APE.transitionOut;
+	APE.acceptInput = APE.transitionOut;
 }
 
 
-function start() {
-	console.log("start");
-	APE.acceptinput = true;
-	APE.scene = new penduinSCENE(APE.canvas, APE.width, APE.height,
-								 tick, 60);
-	APE.scene.showFPS(true);
-
+function initTitle() {
+	APE.scene.addBG(APE.thing.title, "title");
+}
+function initMenu() {
 	APE.scene.addOBJ(APE.thing.ape, "ape");
 	APE.thing.ape.x = (APE.width / 2);
 	APE.thing.ape.y = (APE.height / 2);
@@ -73,10 +104,18 @@ function start() {
 	var text = new penduinTEXT("################", 200, "white", false, false, true);
 	APE.scene.addTEXT(text, "hashes");
 	text.y = -80;
-	
-	//APE.scene.setVignette("image/scribble/vign01.png");
-	//APE.scene.setGhost(0.75);
-	//APE.scene.setGlow(0.6, 6);
+}
+
+function start() {
+	console.log("start");
+	APE.acceptinput = true;
+	APE.scene = new penduinSCENE(APE.canvas, APE.width, APE.height,
+								 tick, 60);
+	//APE.scene.showFPS(true);
+
+	initTitle();
+	APE.scene.transition(APE.transition, APE.transitionOut,
+						 APE.width / 2, APE.height / 2);
 }
 
 function combineCallbacks(cbList, resultsVary, cb) {
@@ -126,6 +165,9 @@ window.addEventListener("load", function() {
 		mini.scale = 0.1;
 		APE.thing["miniape"] = new penduinOBJ(mini, cb);
 		return true;
+	}, function(cb) {
+		APE.transition = new penduinTRANSITION(transitionEnd);
+		cb(true);
 	});
 
 	combineCallbacks(cbs, null, start);
@@ -136,6 +178,11 @@ window.addEventListener("click", function() {
 
 
 function handlekey(event, down) {
+	if(!APE.acceptInput) {
+		return;
+	}
+	APE.input = down;
+	console.log("here", APE.input);
 	switch(event.keyCode) {
 	case 38:  //up
 	case 104: //num8

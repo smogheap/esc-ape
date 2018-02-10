@@ -870,6 +870,21 @@ function penduinSCENE(canvas, logicWidth, logicHeight,
 		}
 		return obj;
 	};
+	// remove (and return) all scene objects
+	this.removeOBJs = function removeOBJs() {
+		var removed = [];
+		//asdf
+		Object.keys(objects).every(function(key) {
+			var obj = objects[key] || null;
+			if(obj) {
+				removed.push(objects[name]);
+				delete objects[name];
+				obj.scene = null;
+			}
+			return true;
+		});
+		return removed;
+	}
 
 	// add a named penduinOBJ to the scene as a background layer
 	this.addBG = function addBG(bg, name) {
@@ -893,6 +908,21 @@ function penduinSCENE(canvas, logicWidth, logicHeight,
 		}
 		return bg;
 	};
+	// remove (and return) all scene backgrounds
+	this.removeBGs = function removeOBJs() {
+		var removed = [];
+		//asdf
+		Object.keys(backgrounds).every(function(key) {
+			var obj = backgrounds[key] || null;
+			if(obj) {
+				removed.push(backgrounds[name]);
+				delete backgrounds[name];
+				obj.scene = null;
+			}
+			return true;
+		});
+		return removed;
+	}
 
 	// add a named penduinTEXT plate to the scene
 	this.addTEXT = function addTEXT(text, name) {
