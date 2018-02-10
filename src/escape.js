@@ -122,6 +122,17 @@ function animateMenu(time) {
 	APE.thing.credits.$.sign.rotate = sin300 * 5;
 	APE.thing.play.$.sign.rotate = sin300 * -5;
 
+	//animate howto
+	if(sin300 > 0) {
+		APE.thing.menu.setTags(["right"]);
+		APE.thing.menu.$.key.offset.y = APE.height / 3;
+		APE.thing.menu.$.key.scale = 0.35;
+	} else {
+		APE.thing.menu.setTags(["left"]);
+		APE.thing.menu.$.key.offset.y = APE.height / 3 -40;
+		APE.thing.menu.$.key.scale = 0.4;
+	}
+
 	APE.thing.ape.x = APE.anchor.x;
 	APE.thing.ape.y = APE.anchor.y;
 	if(APE.grabLeft) {
@@ -226,15 +237,15 @@ function initCredits() {
 
 	var owen =    new penduinTEXT("Owen Swerkstrom - graphics, engine       ",
 							   50, "white", true, true, true);
-	owen.x = APE.width / 2;
+	owen.x = APE.width * 9/16;
 	owen.y = APE.height * 10/16;
 	var micah =   new penduinTEXT("Micah N Gorrell - concept, programming   ",
 								50, "white", true, true, true);
-	micah.x = APE.width / 2;
+	micah.x = APE.width * 9/16;
 	micah.y = APE.height * 11/16;
-	var special = new penduinTEXT(" Special thanks : Kim Guyer  Leah Gorrell",
+	var special = new penduinTEXT("Special thanks : Kim Guyer  Leah Gorrell",
 								  50, "white", true, true, true);
-	special.x = APE.width / 2;
+	special.x = APE.width * 9/16;
 	special.y = APE.height * 12/16;
 
 	APE.scene.addTEXT(owen);
