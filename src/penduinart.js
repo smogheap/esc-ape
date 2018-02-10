@@ -916,11 +916,11 @@ function penduinSCENE(canvas, logicWidth, logicHeight,
 		Object.keys(backgrounds).every(function(key) {
 			var bg = backgrounds[key] || null;
 			if(bg) {
-				removed.push(backgrounds[name]);
-				delete backgrounds[name];
+				removed.push(backgrounds[key]);
+				delete backgrounds[key];
 				bg.scene = null;
 			}
-			bg = bgcanv[key];
+			bg = bgcanv[key] || null;
 			if(bg) {
 				delete bgcanv[key];
 			}
