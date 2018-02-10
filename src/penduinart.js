@@ -899,8 +899,8 @@ function penduinSCENE(canvas, logicWidth, logicHeight,
 	this.removeBG = function removeBG(name) {
 		var bg = backgrounds[name] || null;
 		if(bg) {
-			delete backgrounds[name];
 			bg.scene = null;
+			delete backgrounds[name];
 		}
 		bg = bgcanv[name] || null;
 		if(bg) {
@@ -917,8 +917,8 @@ function penduinSCENE(canvas, logicWidth, logicHeight,
 			var bg = backgrounds[key] || null;
 			if(bg) {
 				removed.push(backgrounds[key]);
-				delete backgrounds[key];
 				bg.scene = null;
+				delete backgrounds[key];
 			}
 			bg = bgcanv[key] || null;
 			if(bg) {
