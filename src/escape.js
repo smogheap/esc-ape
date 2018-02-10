@@ -368,7 +368,8 @@ window.addEventListener("load", function() {
 
 	// load transitions
 	cbs.push(function(cb) {
-		APE.transition = new penduinTRANSITION(transitionEnd);
+		APE.transition = new penduinTRANSITION(transitionEnd, undefined,
+											   undefined, 500);
 		cb(true);
 	});
 
