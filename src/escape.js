@@ -66,7 +66,7 @@ function transitionEnd() {
 	//set up next scene etc
 	if(APE.transitionOut) {
 		APE.scene.removeOBJs();
-		APE.scene.removeBGs();
+		//APE.scene.removeBGs();
 		APE.mode = APE.nextMode;
 		switch(APE.mode) {
 		default:
