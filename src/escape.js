@@ -130,9 +130,9 @@ function animateMenu(time) {
 	APE.thing.target.x = APE.nextGrab.x;
 	APE.thing.target.y = APE.nextGrab.y;
 
-	if(APE.thing.ape.x > APE.width) {
+	if(APE.hit.x > APE.width) {
 		changeScene("game");
-	} else if(APE.thing.ape.x < 0) {
+	} else if(APE.hit.x < 0) {
 		changeScene("credits");
 	}
 }
@@ -185,6 +185,12 @@ function tick(scene, time) {
 
 
 function initTitle() {
+	APE.coins = 0;
+	APE.level = 0;
+
+	APE.scene.addBG(APE.thing.title, "title");
+}
+function initCredits() {
 	APE.coins = 0;
 	APE.level = 0;
 
@@ -263,7 +269,6 @@ function newInput(e) {
 	// whether up or down, an input change is what we care about
 	if(APE.acceptInput) {
 		if(e.keyCode) {
-			console.log(e);
 			// hack to ignore key repeat
 			if(e.type === "keydown" && !APE.lastKey) {
 				APE.lastKey = e.keyCode;
@@ -279,7 +284,6 @@ function newInput(e) {
 			APE.input = true;
 			//console.log("ok 'cause not a key");
 		}
-		console.log(e);
 	}
 }
 window.addEventListener("keydown", newInput);
