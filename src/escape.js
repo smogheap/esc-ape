@@ -176,14 +176,14 @@ window.addEventListener("load", function() {
 window.addEventListener("click", function() {
 });
 window.addEventListener("mousedown", function() {
-if(APE.acceptInput) {
-	APE.input = true;
-}
+	if(APE.acceptInput) {
+		APE.input = true;
+	}
 });
-window.addEventListener("click", function() {
-if(APE.acceptInput) {
-        APE.input = true;
-}
+window.addEventListener("mouseup", function() {
+	if(APE.acceptInput) {
+		APE.input = false;
+	}
 });
 
 function handlekey(event, down) {
