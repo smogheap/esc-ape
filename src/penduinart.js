@@ -910,14 +910,19 @@ function penduinSCENE(canvas, logicWidth, logicHeight,
 	};
 	// remove (and return) all scene backgrounds
 	this.removeBGs = function removeOBJs() {
+		//TODO: cleanup to not reimplemented, add removeTXTs
 		var removed = [];
 		//asdf
 		Object.keys(backgrounds).every(function(key) {
-			var obj = backgrounds[key] || null;
-			if(obj) {
+			var bg = backgrounds[key] || null;
+			if(bg) {
 				removed.push(backgrounds[name]);
 				delete backgrounds[name];
-				obj.scene = null;
+				bg.scene = null;
+			}
+			bg = bgcanv[key];
+			if(bg) {
+				delete bgcanv[key];
 			}
 			return true;
 		});
