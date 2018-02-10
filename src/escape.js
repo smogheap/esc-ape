@@ -149,17 +149,17 @@ function animateMenu(time) {
 	APE.nextGrab.y = APE.anchor.y;
 
 	if(APE.showDebug) {
-		// '#' at anchor point
-		APE.thing.hash.x = APE.anchor.x;
-		APE.thing.hash.y = APE.anchor.y;
+		// red at anchor point
+		APE.thing.targetred.x = APE.anchor.x;
+		APE.thing.targetred.y = APE.anchor.y;
 
-		// 'x' at collision point(?)
-		APE.thing.reticle.x = APE.hit.x;
-		APE.thing.reticle.y = APE.hit.y;
+		// yellow at collision point(?)
+		APE.thing.targetyellow.x = APE.hit.x;
+		APE.thing.targetyellow.y = APE.hit.y;
 
-		// '!' at next grab point
-		APE.thing.target.x = APE.nextGrab.x;
-		APE.thing.target.y = APE.nextGrab.y;
+		// blue at next grab point
+		APE.thing.targetblue.x = APE.nextGrab.x;
+		APE.thing.targetblue.y = APE.nextGrab.y;
 	}
 }
 
@@ -275,16 +275,16 @@ function initCredits() {
 	APE.thing.escape.y = APE.height / 3;
 
 	var owen =    new penduinTEXT("Owen Swerkstrom - graphics, engine       ",
-							   50, "white", true, true, true);
-	owen.x = APE.width * 9/16;
+							   50, "white", false, false, true);
+	owen.x = APE.width * 4/16;
 	owen.y = APE.height * 10/16;
 	var micah =   new penduinTEXT("Micah N Gorrell - concept, programming   ",
-								50, "white", true, true, true);
-	micah.x = APE.width * 9/16;
+								50, "white", false, false, true);
+	micah.x = APE.width * 4/16;
 	micah.y = APE.height * 11/16;
-	var special = new penduinTEXT("Special thanks : Kim Guyer  Leah Gorrell",
-								  50, "white", true, true, true);
-	special.x = APE.width * 9/16;
+	var special = new penduinTEXT(" Special thanks : Kim Guyer  Leah Gorrell",
+								  50, "white", false, false, true);
+	special.x = APE.width * 4/16;
 	special.y = APE.height * 12/16;
 
 	APE.scene.addTEXT(owen);
@@ -296,8 +296,7 @@ function initMenu() {
 	APE.level = 0;
 
 	APE.scene.setBG("#006800");
-	APE.scene.addBG(APE.thing.menu, "menu");
-	APE.scene.addBG(APE.thing.menu, "menu");
+	APE.scene.addOBJ(APE.thing.menu, "menu");
 
 	APE.scene.addOBJ(APE.thing.vine01, "vine");
 	var inst = [];
@@ -316,7 +315,7 @@ function initMenu() {
 	APE.grabLeft = true;
 	// set up anchor point for animation
 	APE.anchor.x = (APE.width / 2);
-	APE.anchor.y = (APE.height / 2);
+	APE.anchor.y = (APE.height / 2 - 55);
 
 	APE.scene.addOBJ(APE.thing["credits"], "credits");
 	APE.thing.credits.x = (APE.width / 6);
@@ -327,17 +326,16 @@ function initMenu() {
 	APE.thing.play.y = (APE.height * 7 / 8);
 
 	var howto = new penduinTEXT("Hold any key/button/etc and release!",
-								50, "white", true, true, true);
-	howto.x = APE.width / 2;
-	howto.y = APE.height / 8;
+								50, "white", false, false, true);
+//	howto.x = 0;
+//	howto.y = 0;
+	howto.x = APE.width * 3/12;
+	howto.y = APE.height * 1/12;
 	APE.scene.addTEXT(howto, "howto");
 
-	APE.thing.reticle = new penduinTEXT("x", 100, "white", true, true, true);
-	APE.scene.addTEXT(APE.thing.reticle, "mark");
-	APE.thing.hash = new penduinTEXT("#", 100, "white", true, true, true);
-	APE.scene.addTEXT(APE.thing.hash, "hash");
-	APE.thing.target = new penduinTEXT("!", 100, "white", true, true, true);
-	APE.scene.addTEXT(APE.thing.target, "target");
+	APE.scene.addOBJ(APE.thing.targetred);
+	APE.scene.addOBJ(APE.thing.targetyellow);
+	APE.scene.addOBJ(APE.thing.targetblue);
 	//var text = new penduinTEXT("################", 200, "white", false, false, true);
 	//APE.scene.addTEXT(text, "hashes");
 	//text.y = -80;

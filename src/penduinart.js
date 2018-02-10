@@ -505,13 +505,14 @@ function penduinTEXT(string, size, color, centerx, centery, shadow) {
 	};
 	this.setString = function setString(str) {
 		string = str;
-		metric = null;
+//		metric = null;
 	};
 	this.setColor = function setString(col) {
 		color = col;
 	};
 
 	this.draw = function draw(ctx, scale, time) {
+//		metric = null;
 		if(!visible) {
 			return;
 		}
@@ -519,20 +520,26 @@ function penduinTEXT(string, size, color, centerx, centery, shadow) {
 		ctx.font = ((size * scale) +
 					"px monospace, Monaco, 'Lucida Console'");
 		ctx.textBaseline = "top";
+//TODO: fix centering. it's a mess.
 		if(!metric) {
 			metric = ctx.measureText(string);
-			offx = centerx * metric.width * scale;
-			offy = centery * size * scale;
+			if(centerx) {
+				offx = metric.width / -2 * scale;
+			}
+			if(centery) {
+				offy = (size * scale) / -2 * scale;
+			}
 		}
 		ctx.globalAlpha = this.alpha;
 		ctx.rotate(this.rotate);
 		ctx.scale(this.scale, this.scale);
 		if(shadow) {
 			ctx.fillStyle = "black";
-			ctx.fillText(string, (this.x * scale) - offx + 1, (this.y * scale) - offy + 1);
+			ctx.fillText(string, (this.x * scale) + offx + 1, (this.y * scale) + offy + 1);
 		}
 		ctx.fillStyle = color;
-		ctx.fillText(string, (this.x * scale) - offx, (this.y * scale) - offy);
+		ctx.fillText(string, (this.x * scale) + offx, (this.y * scale) + offy);
+//		console.log("text at " + ((this.x * scale) - offx) + " " + ((this.y * scale) - offy));
 		ctx.restore();
 	};
 }

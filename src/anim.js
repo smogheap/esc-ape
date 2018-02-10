@@ -106,8 +106,8 @@ function ape_hangleft(ape, time) {
 		ape.addTags("back");
 	}
 
-	ape.$["dummy-body"].offset.x = sin300 * 700 - 80;
-	ape.$["dummy-body"].offset.y = cos150 * 200 + 270;
+	ape.$["dummy-body"].offset.x = sin300 * 700 - 50;
+	ape.$["dummy-body"].offset.y = cos150 * 200 + 530;
 
 	ape.$["arm-r"].rotate = sin300 * 50 + 140;
 	ape.$["arm-l"].rotate = sin300 * -50 - 10;
@@ -152,8 +152,8 @@ function ape_hangright(ape, time) {
 		ape.addTags("back");
 	}
 
-	ape.$["dummy-body"].offset.x = -sin300 * 700 - 80;
-	ape.$["dummy-body"].offset.y = cos150 * 200 + 270;
+	ape.$["dummy-body"].offset.x = -sin300 * 700 - 50;
+	ape.$["dummy-body"].offset.y = cos150 * 200 + 530;
 
 	ape.$["arm-r"].rotate = sin300 * 50 + 140;
 	ape.$["arm-l"].rotate = sin300 * -50 - 10;
