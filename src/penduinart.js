@@ -521,7 +521,7 @@ function penduinTEXT(string, size, color, centerx, centery, shadow) {
 		ctx.textBaseline = "top";
 		if(!metric) {
 			metric = ctx.measureText(string);
-			offx = centerx * metric.width;
+			offx = centerx * metric.width * scale;
 			offy = centery * size * scale;
 		}
 		ctx.globalAlpha = this.alpha;
@@ -876,16 +876,10 @@ function penduinSCENE(canvas, logicWidth, logicHeight,
 	// remove (and return) all scene objects
 	this.removeOBJs = function removeOBJs() {
 		var removed = [];
-		//asdf
 		Object.keys(objects).every(function(key) {
-			var obj = objects[key] || null;
-			if(obj) {
-				removed.push(objects[name]);
-				delete objects[name];
-				obj.scene = null;
-			}
+			removed.push(this.removeOBJ(key));
 			return true;
-		});
+		}.bind(this));
 		return removed;
 	}
 
@@ -896,6 +890,7 @@ function penduinSCENE(canvas, logicWidth, logicHeight,
 		}
 		backgrounds[name] = bg;
 		bg.scene = this;
+		redrawbg = true;
 		return bg;
 	};
 	// remove (and return) a scene background
@@ -913,28 +908,12 @@ function penduinSCENE(canvas, logicWidth, logicHeight,
 		return bg;
 	};
 	// remove (and return) all scene backgrounds
-	this.removeBGs = function removeOBJs() {
-		//TODO: cleanup to not reimplemented, add removeTXTs
+	this.removeBGs = function removeBGs() {
 		var removed = [];
-		//asdf
 		Object.keys(backgrounds).every(function(key) {
-			var bg = backgrounds[key] || null;
-			if(bg) {
-				removed.push(backgrounds[key]);
-				bg.scene = null;
-				console.log("bg before", backgrounds);
-				delete backgrounds[key];
-				console.log("bg after", backgrounds);
-			}
-			bg = bgcanv[key] || null;
-			if(bg) {
-				console.log("bgcanv before", backgrounds);
-				delete bgcanv[key];
-				console.log("bgcanv after", backgrounds);
-			}
+			removed.push(this.removeBG(key));
 			return true;
-		});
-		redrawbg = true;
+		}.bind(this));
 		return removed;
 	}
 
@@ -955,6 +934,22 @@ function penduinSCENE(canvas, logicWidth, logicHeight,
 			text.scene = null;
 		}
 		return text;
+	};
+	// remove (and return) all text plates
+	this.removeTEXTs = function removeTEXTs() {
+		var removed = [];
+		Object.keys(texts).every(function(key) {
+			removed.push(this.removeTEXT(key));
+			return true;
+		}.bind(this));
+		return removed;
+	};
+
+	// remove (and ditch!) all objects, backgrounds, texts from scene
+	this.clear = function clear() {
+		this.removeOBJs();
+		this.removeBGs();
+		this.removeTEXTs();
 	};
 
 	// set the scene's background color

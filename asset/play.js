@@ -3,7 +3,7 @@ LOAD({
 	"scale": 0.5,
 	"above": [
 		{
-			"name": "sign-play",
+			"name": "sign",
 			"image": "gpx/sign-play.png",
 			"pivot": {
 				"x": 280,

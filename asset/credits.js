@@ -3,7 +3,7 @@ LOAD({
 	"scale": 0.5,
 	"above": [
 		{
-			"name": "sign-credits",
+			"name": "sign",
 			"image": "gpx/sign-credits.png",
 			"pivot": {
 				"x": 370,

@@ -9,22 +9,23 @@ APE = {
 	transitionIn: false,
 	transitionOut: false,
 	mode: "title",  //"menu", "game", "taunt", "credits"
-	nextMode: "title",
+	nextMode: null,
 	acceptInput: false,
 	input: false,
 	lastKey: null,
 	grabLeft: false,
+	showDebug: false,
 	anchor: {
-		"x": -1,
-		"y": -1
+		x: -1,
+		y: -1
 	},
 	hit: {
-		"x": -1,
-		"y": -1
+		x: -1,
+		y: -1
 	},
 	nextGrab: {
-		"x": -1,
-		"y": -1
+		x: -1,
+		y: -1
 	},
 	level: 0,
 	coins: 0,
@@ -69,18 +70,30 @@ function combineCallbacks(cbList, resultsVary, cb) {
 
 
 function changeScene(next) {
+	if(APE.nextMode) {
+		// hold your horses, we're not changed from before yet!
+		return;
+	}
+	var x = APE.width / 2;
+	var y = APE.height / 2;
+	switch(APE.mode) {
+	case "menu":
+	case "game":
+		x = APE.hit.x;
+		y = APE.hit.y;
+	default:
+		break;
+	}
 	APE.nextMode = next;
 	APE.acceptInput = false;
 	APE.transitionOut = true;
-	APE.scene.transition(APE.transition, APE.transitionOut,
-						 APE.width / 2, APE.height / 2);
+	APE.scene.transition(APE.transition, APE.transitionOut, x, y);
 }
 
 function transitionEnd() {
 	//set up next scene etc
 	if(APE.transitionOut) {
-		APE.scene.removeOBJs();
-		APE.scene.removeBGs();
+		APE.scene.clear();
 		APE.mode = APE.nextMode;
 		switch(APE.mode) {
 		default:
@@ -99,10 +112,15 @@ function transitionEnd() {
 	APE.transitionOut = !APE.transitionOut;
 	APE.acceptInput = APE.transitionOut;
 	APE.lastKey = null;
+	APE.nextMode = null;
 }
 
 function animateMenu(time) {
 	var sin300 = Math.sin(time / 300);
+
+	//animate signs just for fun
+	APE.thing.credits.$.sign.rotate = sin300 * 5;
+	APE.thing.play.$.sign.rotate = sin300 * -5;
 
 	APE.thing.ape.x = APE.anchor.x;
 	APE.thing.ape.y = APE.anchor.y;
@@ -118,23 +136,23 @@ function animateMenu(time) {
 	APE.hit.y = APE.anchor.y + 90;
 	APE.nextGrab.y = APE.anchor.y;
 
-	// '#' at anchor point
-	APE.thing.hash.x = APE.anchor.x;
-	APE.thing.hash.y = APE.anchor.y;
+	if(APE.showDebug) {
+		// '#' at anchor point
+		APE.thing.hash.x = APE.anchor.x;
+		APE.thing.hash.y = APE.anchor.y;
 
-	// 'x' at collision point(?)
-	APE.thing.reticle.x = APE.hit.x;
-	APE.thing.reticle.y = APE.hit.y;
+		// 'x' at collision point(?)
+		APE.thing.reticle.x = APE.hit.x;
+		APE.thing.reticle.y = APE.hit.y;
 
-	// '!' at next grab point
-	APE.thing.target.x = APE.nextGrab.x;
-	APE.thing.target.y = APE.nextGrab.y;
-
-	if(APE.hit.x > APE.width) {
-		changeScene("game");
-	} else if(APE.hit.x < 0) {
-		changeScene("credits");
+		// '!' at next grab point
+		APE.thing.target.x = APE.nextGrab.x;
+		APE.thing.target.y = APE.nextGrab.y;
 	}
+}
+
+function animateCredits(time) {
+	APE.thing.creditsbg.$.sky.rotate = time / 360;
 }
 
 function handleinput(time) {
@@ -157,6 +175,7 @@ function handleinput(time) {
 		}
 		break;
 	case "title":
+	case "credits":
 	default:
 		if(APE.input) {
 			APE.input = false;
@@ -175,6 +194,14 @@ function tick(scene, time) {
 		break;
 	case "menu":
 		animateMenu(time);
+		if(APE.hit.x > APE.width * 7/8) {
+			changeScene("title");  // TODO: "game" once that exists :^)
+		} else if(APE.hit.x < APE.width * 1/8) {
+			changeScene("credits");
+		}
+		break;
+	case "credits":
+		animateCredits(time);
 	};
 	if(APE.transitionIn) {
 		APE.transitionIn = false;
@@ -191,16 +218,46 @@ function initTitle() {
 	APE.scene.addBG(APE.thing.title, "title");
 }
 function initCredits() {
-	APE.coins = 0;
-	APE.level = 0;
+	APE.scene.setBG("#6888fc");
+	APE.scene.addOBJ(APE.thing.creditsbg, "creditsbg");
+	APE.scene.addOBJ(APE.thing.escape, "escape");
+	APE.thing.escape.x = APE.width / 2;
+	APE.thing.escape.y = APE.height / 3;
 
-	APE.scene.addBG(APE.thing.title, "title");
+	var owen =    new penduinTEXT("Owen Swerkstrom - graphics, engine       ",
+							   50, "white", true, true, true);
+	owen.x = APE.width / 2;
+	owen.y = APE.height * 10/16;
+	var micah =   new penduinTEXT("Micah N Gorrell - concept, programming   ",
+								50, "white", true, true, true);
+	micah.x = APE.width / 2;
+	micah.y = APE.height * 11/16;
+	var special = new penduinTEXT(" Special thanks : Kim Guyer  Leah Gorrell",
+								  50, "white", true, true, true);
+	special.x = APE.width / 2;
+	special.y = APE.height * 12/16;
+
+	APE.scene.addTEXT(owen);
+	APE.scene.addTEXT(micah);
+	APE.scene.addTEXT(special);
 }
 function initMenu() {
 	APE.coins = 0;
 	APE.level = 0;
 
 	APE.scene.setBG("#006800");
+	APE.scene.addBG(APE.thing.menu, "menu");
+	APE.scene.addBG(APE.thing.menu, "menu");
+
+	APE.scene.addOBJ(APE.thing.vine01, "vine");
+	var inst = [];
+	for(var i = 0; i < 7; ++i) {
+		inst.push({
+			x: i * (563/2) - 1,
+			y: APE.height / 2 - 55
+		});
+	}
+	APE.thing.vine01.setInstances(inst);
 
 	APE.scene.addOBJ(APE.thing.ape, "ape");
 	APE.thing.ape.scale = 2; // show the ape bigger for menu
@@ -218,6 +275,12 @@ function initMenu() {
 	APE.scene.addOBJ(APE.thing["play"], "play");
 	APE.thing.play.x = (APE.width * 5 / 6);
 	APE.thing.play.y = (APE.height * 7 / 8);
+
+	var howto = new penduinTEXT("Hold any key/button/etc and release!",
+								50, "white", true, true, true);
+	howto.x = APE.width / 2;
+	howto.y = APE.height / 8;
+	APE.scene.addTEXT(howto, "howto");
 
 	APE.thing.reticle = new penduinTEXT("x", 100, "white", true, true, true);
 	APE.scene.addTEXT(APE.thing.reticle, "mark");

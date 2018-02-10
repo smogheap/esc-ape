@@ -106,7 +106,7 @@ function ape_hangleft(ape, time) {
 		ape.addTags("back");
 	}
 
-	ape.$["dummy-body"].offset.x = sin300 * 740 - 180;
+	ape.$["dummy-body"].offset.x = sin300 * 700 - 80;
 	ape.$["dummy-body"].offset.y = cos150 * 200 + 270;
 
 	ape.$["arm-r"].rotate = sin300 * 50 + 140;
@@ -152,7 +152,7 @@ function ape_hangright(ape, time) {
 		ape.addTags("back");
 	}
 
-	ape.$["dummy-body"].offset.x = -sin300 * 740 - 180;
+	ape.$["dummy-body"].offset.x = -sin300 * 700 - 80;
 	ape.$["dummy-body"].offset.y = cos150 * 200 + 270;
 
 	ape.$["arm-r"].rotate = sin300 * 50 + 140;
