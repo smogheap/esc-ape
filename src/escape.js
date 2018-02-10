@@ -175,7 +175,16 @@ window.addEventListener("load", function() {
 
 window.addEventListener("click", function() {
 });
-
+window.addEventListener("mousedown", function() {
+if(APE.acceptInput) {
+	APE.input = true;
+}
+});
+window.addEventListener("click", function() {
+if(APE.acceptInput) {
+        APE.input = true;
+}
+});
 
 function handlekey(event, down) {
 	if(!APE.acceptInput) {
