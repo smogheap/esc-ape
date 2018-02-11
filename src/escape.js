@@ -300,9 +300,6 @@ function handleinput(time) {
 
 function reachedGoal(x, y) {
 	//blue channel
-	console.log(APE._mapData.data[((Math.floor(y * APE._mapScale) *
-									(APE._mapData.width * 4)) +
-								   (Math.floor(x * APE._mapScale) * 4)) + 2]);
 	return APE._mapData.data[((Math.floor(y * APE._mapScale) *
 							   (APE._mapData.width * 4)) +
 							  (Math.floor(x * APE._mapScale) * 4)) + 2];
