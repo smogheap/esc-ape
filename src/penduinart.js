@@ -32,7 +32,7 @@ function penduinOBJ(obj, cb) {
 		var $ = this.$;
 		for(i = 0; i < part.length; i++) {
 			if(part[i].image && part[i].name) {
-				console.log("loading '" + part[i].name + "' (" + part[i].image + ")");
+				//console.log("loading '" + part[i].name + "' (" + part[i].image + ")");
 				$[part[i].name] = part[i];
 
 				if(obj._img[part[i].image] === undefined) {
@@ -46,7 +46,7 @@ function penduinOBJ(obj, cb) {
 						//e.target.removeEventListener("load", this);
 						obj._imgLoaded++;
 						if(loadedAll() && cb) {
-							console.log("all done");
+							//console.log("all done");
 							obj.pose = obj.pose || {};
 							obj.pose["_default"] = capturePose();
 							lastsolved = capturePose();
@@ -71,7 +71,7 @@ function penduinOBJ(obj, cb) {
 		for(i in obj._img) {
 			total++;
 		}
-		console.log("loaded " + obj._imgLoaded + " of " + total);
+		//console.log("loaded " + obj._imgLoaded + " of " + total);
 		if(obj._imgLoaded > total) {
 			console.log("greater, why?", obj);
 		}

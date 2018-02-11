@@ -8,7 +8,7 @@ APE = {
 	transition: null,
 	transitionIn: false,
 	transitionOut: false,
-	mode: "title",  //"menu", "game", "taunt", "credits"
+	mode: null,  // "title", "menu", "game", "taunt", "credits"
 	nextMode: null,
 	acceptInput: false,
 	input: false,
@@ -70,7 +70,7 @@ function combineCallbacks(cbList, resultsVary, cb) {
 }
 
 
-function changeScene(next) {
+function changeScene(next, skipTrans) {
 	if(APE.nextMode) {
 		// hold your horses, we're not changed from before yet!
 		return;
@@ -88,7 +88,11 @@ function changeScene(next) {
 	APE.nextMode = next;
 	APE.acceptInput = false;
 	APE.transitionOut = true;
-	APE.scene.transition(APE.transition, APE.transitionOut, x, y);
+	if(skipTrans) {
+		transitionEnd();
+	} else {
+		APE.scene.transition(APE.transition, APE.transitionOut, x, y);
+	}
 }
 
 function transitionEnd() {
@@ -346,11 +350,13 @@ function start() {
 	APE.acceptinput = true;
 	APE.scene = new penduinSCENE(APE.canvas, APE.width, APE.height,
 								 tick, 60);
+	APE.scene.setBG("#000000");
 	//APE.scene.showFPS(true);
 
-	initTitle();
-	APE.scene.transition(APE.transition, APE.transitionOut,
-						 APE.width / 2, APE.height / 2);
+	changeScene("title", true);
+//	initTitle();
+//	APE.scene.transition(APE.transition, APE.transitionOut,
+//						 APE.width / 2, APE.height / 2);
 }
 
 window.addEventListener("load", function() {
