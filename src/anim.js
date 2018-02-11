@@ -182,3 +182,16 @@ function ape_hangright(ape, time) {
 	ape.$["body-front-skin"].scalex = Math.min(-sin300 * 2, 1);
 	ape.$["body-front-skin"].rotate = sin300 * 15 + 15;
 }
+
+function coin_spin(coin, time) {
+	var sin300 = Math.sin(time / 300);
+	var sin150 = Math.sin(time / 150);
+	var cos150 = Math.cos(time / 150);
+	coin.$.coin.scalex = sin150;
+	coin.$.coindim.scalex = sin150;
+	if(cos150 < 0) {
+		coin.setTags("shine");
+	} else {
+		coin.setTags("dim");
+	}
+}

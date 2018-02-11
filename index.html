@@ -26,6 +26,9 @@
       }
       #display {
       }
+	  .hidden {
+        display: none;
+	  }
     </style>
 
     <script type="text/javascript" src="src/penduinart.js"></script>
@@ -44,11 +47,16 @@
     <script type="text/javascript" src="asset/credits.js"></script>
     <script type="text/javascript" src="asset/play.js"></script>
     <script type="text/javascript" src="asset/coin.js"></script>
+	<!-- note to self: remember map img's below... -->
+    <script type="text/javascript" src="asset/lv01.js"></script>
 
   </head>
   <body>
     <div id="page"><div id="center">
       <canvas id="display"></canvas>
     </div></div>
+	<div class="hidden">
+	  <img id="lv01" src="map/lv01.png">
+	</div>
   </body>
 </html>

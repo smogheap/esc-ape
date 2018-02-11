@@ -14,7 +14,7 @@ APE = {
 	input: false,
 	lastKey: null,
 	grabLeft: false,
-	showDebug: false,
+	showDebug: true,
 	lastGamepadState: null,
 	anchor: {
 		x: -1,
@@ -30,6 +30,26 @@ APE = {
 	},
 	level: 0,
 	coins: 0,
+	gotCoin: false,
+	levels: [
+		{
+			name: "lv01",
+			map: {
+				canvas: null,
+				ctx: null,
+				data: null,
+				scale: 0
+			},
+			start: {
+				x: 180,
+				y: 116
+			},
+			coin: {
+				x: 630,
+				y: 860
+			}
+		}
+	]
 };
 function LOAD(json) {
 	var data = json;
@@ -108,6 +128,9 @@ function transitionEnd() {
 		case "menu":
 			initMenu();
 			break;
+		case "game":
+			initGame();
+			break;
 		case "credits":
 			initCredits();
 			break;
@@ -123,11 +146,11 @@ function transitionEnd() {
 function animateMenu(time) {
 	var sin300 = Math.sin(time / 300);
 
-	//animate signs just for fun
+	// animate signs just for fun
 	APE.thing.credits.$.sign.rotate = sin300 * 5;
 	APE.thing.play.$.sign.rotate = sin300 * -5;
 
-	//animate howto
+	// animate howto
 	if(sin300 > 0) {
 		APE.thing.menu.setTags(["right"]);
 		APE.thing.menu.$.key.offset.y = APE.height / 3;
@@ -138,6 +161,7 @@ function animateMenu(time) {
 		APE.thing.menu.$.key.scale = 0.4;
 	}
 
+	// animate ape
 	APE.thing.ape.x = APE.anchor.x;
 	APE.thing.ape.y = APE.anchor.y;
 	if(APE.grabLeft) {
@@ -165,6 +189,42 @@ function animateMenu(time) {
 		APE.thing.targetblue.x = APE.nextGrab.x;
 		APE.thing.targetblue.y = APE.nextGrab.y;
 	}
+}
+
+function animateGame(time) {
+	var sin300 = Math.sin(time / 300);
+
+	// animate ape
+	APE.thing.ape.x = APE.anchor.x;
+	APE.thing.ape.y = APE.anchor.y;
+	if(APE.grabLeft) {
+		ape_hangleft(APE.thing.ape, time);
+		APE.hit.x = APE.anchor.x + sin300 * 75;
+		APE.nextGrab.x = APE.anchor.x + sin300 * 155;
+	} else {
+		ape_hangright(APE.thing.ape, time);
+		APE.hit.x = APE.anchor.x - sin300 * 75;
+		APE.nextGrab.x = APE.anchor.x - sin300 * 155;
+	}
+	APE.hit.y = APE.anchor.y + 45;
+	APE.nextGrab.y = APE.anchor.y;
+
+	if(APE.showDebug) {
+		// red at anchor point
+		APE.thing.targetred.x = APE.anchor.x;
+		APE.thing.targetred.y = APE.anchor.y;
+
+		// yellow at collision point(?)
+		APE.thing.targetyellow.x = APE.hit.x;
+		APE.thing.targetyellow.y = APE.hit.y;
+
+		// blue at next grab point
+		APE.thing.targetblue.x = APE.nextGrab.x;
+		APE.thing.targetblue.y = APE.nextGrab.y;
+	}
+
+	// animate coin
+	coin_spin(APE.thing.coin, time);
 }
 
 function animateCredits(time) {
@@ -238,6 +298,28 @@ function handleinput(time) {
 	}
 }
 
+function reachedGoal(x, y) {
+	//blue channel
+	console.log(APE._mapData.data[((Math.floor(y * APE._mapScale) *
+									(APE._mapData.width * 4)) +
+								   (Math.floor(x * APE._mapScale) * 4)) + 2]);
+	return APE._mapData.data[((Math.floor(y * APE._mapScale) *
+							   (APE._mapData.width * 4)) +
+							  (Math.floor(x * APE._mapScale) * 4)) + 2];
+}
+function canGrab(x, y) {
+	//green channel
+	return APE._mapData.data[((Math.floor(y * APE._mapScale) *
+							   (APE._mapData.width * 4)) +
+							  (Math.floor(x * APE._mapScale) * 4)) + 1];
+}
+function isSolid(x, y) {
+	//red channel
+	return APE._mapData.data[((Math.floor(y * APE._mapScale) *
+							   (APE._mapData.width * 4)) +
+							  (Math.floor(x * APE._mapScale) * 4)) + 0];
+}
+
 function tick(scene, time) {
 	if(APE.acceptInput) {
 		handleinput(time);
@@ -249,11 +331,20 @@ function tick(scene, time) {
 	case "menu":
 		animateMenu(time);
 		if(APE.hit.x > APE.width * 7/8) {
-			changeScene("title");  // TODO: "game" once that exists :^)
+			changeScene("game");
 		} else if(APE.hit.x < APE.width * 1/8) {
 			changeScene("credits");
 		}
 		break;
+	case "game":
+		animateGame(time);
+		if(reachedGoal(APE.hit.x, APE.hit.y)) {
+			// TODO: winning jingle
+			// TODO: tant between levels if got coin
+			//asdf
+			changeScene("game");
+		}
+		// TODO: collect coin
 	case "credits":
 		animateCredits(time);
 	};
@@ -344,6 +435,30 @@ function initMenu() {
 	//APE.scene.addTEXT(text, "hashes");
 	//text.y = -80;
 }
+function initGame() {
+	// cache some stuff for quick lookups
+	APE._mapData = APE.levels[APE.level].map.data;
+	APE._mapScale = APE.levels[APE.level].map.scale;
+	console.log(APE._mapData);
+	APE.gotCoin = false;
+
+	APE.scene.addBG(APE.thing.lv01);
+	APE.scene.addOBJ(APE.thing.ape, "ape");
+	APE.scene.addOBJ(APE.thing.coin, "coin");
+	APE.thing.ape.scale = 1;
+	APE.anchor.x = APE.levels[APE.level].start.x;
+	APE.anchor.y = APE.levels[APE.level].start.y;
+	APE.thing.coin.x = APE.levels[APE.level].coin.x;
+	APE.thing.coin.y = APE.levels[APE.level].coin.y;
+
+	APE.scene.addOBJ(APE.thing.targetred);
+	APE.scene.addOBJ(APE.thing.targetyellow);
+	APE.scene.addOBJ(APE.thing.targetblue);
+
+	APE.grabLeft = true;
+	APE.thing.ape.removeTags(["rclose", "lopen"]);
+	APE.thing.ape.addTags(["ropen", "lclose"]);
+}
 
 function start() {
 	console.log("start");
@@ -354,16 +469,14 @@ function start() {
 	//APE.scene.showFPS(true);
 
 	changeScene("title", true);
-//	initTitle();
-//	APE.scene.transition(APE.transition, APE.transitionOut,
-//						 APE.width / 2, APE.height / 2);
+//	changeScene("game", true);
 }
 
 window.addEventListener("load", function() {
 	APE.canvas = document.querySelector("#display");
 	var cbs = [];
 
-	// load object armatures
+	// load object armatures and backgrounds
 	Object.keys(APE.json).every(function(key) {
 		cbs.push(function(cb) {
 			APE.thing[key] = new penduinOBJ(APE.json[key], cb);
@@ -373,10 +486,20 @@ window.addEventListener("load", function() {
 	});
 
 	// load transitions
-	cbs.push(function(cb) {
-		APE.transition = new penduinTRANSITION(transitionEnd, undefined,
-											   undefined, 500);
-		cb(true);
+	APE.transition = new penduinTRANSITION(transitionEnd, undefined,
+										   undefined, 500);
+	// load level maps
+	APE.levels.every(function(lv) {
+		console.log(lv);
+		var img = document.getElementById(lv.name);
+		lv.map.canvas = document.createElement("canvas");
+		lv.map.canvas.width = img.width;
+		lv.map.canvas.height = img.height;
+		lv.map.scale = img.width / APE.width;
+		lv.map.ctx = lv.map.canvas.getContext("2d");
+		lv.map.ctx.drawImage(img, 0, 0);
+		lv.map.data = lv.map.ctx.getImageData(0, 0, img.width, img.height);
+		return true;
 	});
 
 	combineCallbacks(cbs, null, start);
