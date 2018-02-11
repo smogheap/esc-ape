@@ -89,7 +89,9 @@ function penduinOBJ(obj, cb) {
 		if(instance && instances) {
 			instances.every(function(ins) {
 				// FIXME: not quite right if scale/x/y are 0
+				// FIXME: scaling doesn't work at all, throws translation way off
 				drawPart(ctx, part,
+						 //ins.scale ? (ins.scale * scale) : scale,
 						 ins.scale || scale,
 						 ins.x || displayx,
 						 ins.y || displayy,

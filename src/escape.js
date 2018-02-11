@@ -14,7 +14,7 @@ APE = {
 	input: false,
 	lastKey: null,
 	grabLeft: false,
-	showDebug: true,
+	showDebug: false,
 	lastGamepadState: null,
 	anchor: {
 		x: -1,
@@ -28,6 +28,13 @@ APE = {
 		x: -1,
 		y: -1
 	},
+	newAction: false,
+	freefall: false,
+	speed: {
+		x: 0,
+		y: 0
+	},
+	tally: false,
 	level: 0,
 	coins: 0,
 	gotCoin: false,
@@ -45,8 +52,8 @@ APE = {
 				y: 116
 			},
 			coin: {
-				x: 630,
-				y: 860
+				x: 700,
+				y: 840
 			}
 		}
 	]
@@ -119,6 +126,7 @@ function transitionEnd() {
 	//set up next scene etc
 	if(APE.transitionOut) {
 		APE.scene.clear();
+		APE.thing.coin.setInstances(null);
 		APE.mode = APE.nextMode;
 		switch(APE.mode) {
 		default:
@@ -133,6 +141,9 @@ function transitionEnd() {
 			break;
 		case "credits":
 			initCredits();
+			break;
+		case "taunt":
+			initTaunt();
 			break;
 		}
 		APE.transitionIn = true;
@@ -193,26 +204,78 @@ function animateMenu(time) {
 
 function animateGame(time) {
 	var sin300 = Math.sin(time / 300);
+	var cos300 = Math.cos(time / 300);
 
 	// animate ape
-	APE.thing.ape.x = APE.anchor.x;
-	APE.thing.ape.y = APE.anchor.y;
+
+	if(APE.newAction) {
+		// something changed (grabbed, let go, etc), let's see what's going on
+		APE.newAction = false;
+
+		if(canGrab(APE.nextGrab.x, APE.nextGrab.y)) {
+			APE.freefall = false;
+			APE.anchor.x = APE.nextGrab.x;
+			APE.anchor.y = APE.nextGrab.y;
+		} else if(APE.freefall && canGrab(APE.thing.ape.x, APE.thing.ape.y)) {
+			// if we're falling, grab with either hand
+			APE.freefall = false;
+			APE.anchor.x = APE.thing.ape.x;
+			APE.anchor.y = APE.thing.ape.y;
+		} else {
+			if(APE.freefall) {
+				// cancel flipped input
+				APE.grabLeft = !APE.grabLeft;
+			} else {
+				// jump! tick will move us
+				APE.speed.y = -Math.abs(sin300 * 10);
+
+				if(APE.grabLeft) {
+					APE.thing.ape.x = APE.thing.ape.x - sin300 * 155;
+					APE.speed.x = sin300 * -5;
+				} else {
+					APE.thing.ape.x = APE.thing.ape.x + sin300 * 155;
+					APE.speed.x = sin300 * 5;
+				}
+				APE.thing.ape.y = APE.thing.ape.y - 45;
+			}
+			APE.freefall = true;
+		}
+	}
+	//console.log("y launch speed", -Math.abs(sin300 * 10));
+	/*
+	if(APE.grabLeft) {
+		console.log("x launch speed", sin300 * -5);
+	} else {
+		console.log("x launch speed", sin300 * 5);
+	}
+*/
+	
+	// keep doing what we're doing
+	if(APE.freefall) {
+		//TODO: flailing animation?
+	} else {
+		// swinging as usual
+		APE.thing.ape.x = APE.anchor.x;
+		APE.thing.ape.y = APE.anchor.y;
+	}
 	if(APE.grabLeft) {
 		ape_hangleft(APE.thing.ape, time);
-		APE.hit.x = APE.anchor.x + sin300 * 75;
-		APE.nextGrab.x = APE.anchor.x + sin300 * 155;
+		APE.hit.x = APE.thing.ape.x + sin300 * 75;
+		APE.nextGrab.x = APE.thing.ape.x + sin300 * 155;
 	} else {
 		ape_hangright(APE.thing.ape, time);
-		APE.hit.x = APE.anchor.x - sin300 * 75;
-		APE.nextGrab.x = APE.anchor.x - sin300 * 155;
+		APE.hit.x = APE.thing.ape.x - sin300 * 75;
+		APE.nextGrab.x = APE.thing.ape.x - sin300 * 155;
 	}
-	APE.hit.y = APE.anchor.y + 45;
-	APE.nextGrab.y = APE.anchor.y;
+	APE.hit.y = APE.thing.ape.y + 45;
+	APE.nextGrab.y = APE.thing.ape.y;
+	APE.thing.ape.x = APE.thing.ape.x;
+	APE.thing.ape.y = APE.thing.ape.y;
 
 	if(APE.showDebug) {
 		// red at anchor point
-		APE.thing.targetred.x = APE.anchor.x;
-		APE.thing.targetred.y = APE.anchor.y;
+		APE.thing.targetred.x = APE.thing.ape.x;
+		APE.thing.targetred.y = APE.thing.ape.y;
 
 		// yellow at collision point(?)
 		APE.thing.targetyellow.x = APE.hit.x;
@@ -223,6 +286,13 @@ function animateGame(time) {
 		APE.thing.targetblue.y = APE.nextGrab.y;
 	}
 
+	// animate coin
+	if(!APE.gotCoin) {
+		coin_spin(APE.thing.coin, time);
+	}
+}
+
+function animateTaunt(time) {
 	// animate coin
 	coin_spin(APE.thing.coin, time);
 }
@@ -284,16 +354,30 @@ function handleinput(time) {
 			}
 			// switch hands
 			APE.grabLeft = !APE.grabLeft;
+			APE.newAction = true;
 			APE.anchor.x = APE.nextGrab.x;
 			APE.anchor.y = APE.nextGrab.y;
 		}
 		break;
+	case "taunt":
+		if(APE.input) {
+			APE.input = false;
+			if(APE.level >= APE.levels.length) {
+				changeScene("credits");
+			} else {
+				changeScene("game");
+			}
+		}
 	case "title":
 	case "credits":
 	default:
 		if(APE.input) {
 			APE.input = false;
-			changeScene("menu");
+			if(APE.tally) {
+				changeScene("title");
+			} else {
+				changeScene("menu");
+			}
 		}
 	}
 }
@@ -316,6 +400,10 @@ function isSolid(x, y) {
 							   (APE._mapData.width * 4)) +
 							  (Math.floor(x * APE._mapScale) * 4)) + 0];
 }
+function touchCoin(x, y) {
+	return (x - 64 < APE._coinx && x + 64 > APE._coinx &&
+			y - 64 < APE._coiny && y + 64 > APE._coiny);
+}
 
 function tick(scene, time) {
 	if(APE.acceptInput) {
@@ -335,15 +423,49 @@ function tick(scene, time) {
 		break;
 	case "game":
 		animateGame(time);
-		if(reachedGoal(APE.hit.x, APE.hit.y)) {
+		if(APE.freefall) {
+			APE.thing.ape.x += APE.speed.x;
+			APE.thing.ape.y += APE.speed.y;
+			if(APE.speed.x > 0) {
+				APE.speed.x -= 0.02;
+			} else {
+				APE.speed.x += 0.02;
+			}
+			APE.speed.y += 0.5;
+		}
+
+		// finish level
+		if(!APE.tally && reachedGoal(APE.hit.x, APE.hit.y)) {
 			// TODO: winning jingle
-			// TODO: tant between levels if got coin
-			//asdf
+			APE.tally = true;
+			var next = "game";
+			APE.level++;
+			if(APE.gotCoin) {
+				APE.coins++;
+			}
+			if(APE.level >= APE.levels.length || APE.gotCoin) {
+				next = "taunt";
+			}
+			changeScene(next);
+		}
+
+		// if we fall off the screen, start over
+		if(APE.thing.ape.x < 0 || APE.thing.ape.x > APE.width ||
+		   APE.thing.ape.y > APE.height) {
 			changeScene("game");
 		}
-		// TODO: collect coin
+		// collect coin
+		if(!APE.gotCoin && touchCoin(APE.hit.x, APE.hit.y)) {
+			APE.gotCoin = true;
+			APE.scene.removeOBJ("coin");
+		}
+		break;
+	case "taunt":
+		animateTaunt(time);
+		break;
 	case "credits":
 		animateCredits(time);
+		break;
 	};
 	if(APE.transitionIn) {
 		APE.transitionIn = false;
@@ -356,8 +478,10 @@ function tick(scene, time) {
 function initTitle() {
 	APE.coins = 0;
 	APE.level = 0;
+	APE.tally = false;
 
 	APE.scene.addBG(APE.thing.title, "title");
+	//TODO: music
 }
 function initCredits() {
 	APE.scene.setBG("#6888fc");
@@ -428,6 +552,9 @@ function initMenu() {
 	APE.scene.addOBJ(APE.thing.targetred);
 	APE.scene.addOBJ(APE.thing.targetyellow);
 	APE.scene.addOBJ(APE.thing.targetblue);
+	APE.thing.targetred.x = APE.thing.targetred.y = -100;
+	APE.thing.targetyellow.x = APE.thing.targetyellow.y = -100;
+	APE.thing.targetblue.x = APE.thing.targetblue.y = -100;
 	//var text = new penduinTEXT("################", 200, "white", false, false, true);
 	//APE.scene.addTEXT(text, "hashes");
 	//text.y = -80;
@@ -436,6 +563,8 @@ function initGame() {
 	// cache some stuff for quick lookups
 	APE._mapData = APE.levels[APE.level].map.data;
 	APE._mapScale = APE.levels[APE.level].map.scale;
+	APE._coinx = APE.levels[APE.level].coin.x;
+	APE._coiny = APE.levels[APE.level].coin.y;
 	console.log(APE._mapData);
 	APE.gotCoin = false;
 
@@ -443,6 +572,7 @@ function initGame() {
 	APE.scene.addOBJ(APE.thing.ape, "ape");
 	APE.scene.addOBJ(APE.thing.coin, "coin");
 	APE.thing.ape.scale = 1;
+	APE.thing.coin.scale = 1;
 	APE.anchor.x = APE.levels[APE.level].start.x;
 	APE.anchor.y = APE.levels[APE.level].start.y;
 	APE.thing.coin.x = APE.levels[APE.level].coin.x;
@@ -451,10 +581,68 @@ function initGame() {
 	APE.scene.addOBJ(APE.thing.targetred);
 	APE.scene.addOBJ(APE.thing.targetyellow);
 	APE.scene.addOBJ(APE.thing.targetblue);
+	APE.thing.targetred.x = APE.thing.targetred.y = -100;
+	APE.thing.targetyellow.x = APE.thing.targetyellow.y = -100;
+	APE.thing.targetblue.x = APE.thing.targetblue.y = -100;
 
+	APE.tally = false;
+	APE.freefall = false;
 	APE.grabLeft = true;
+	APE.input = false;
+	APE.newAction = false;
 	APE.thing.ape.removeTags(["rclose", "lopen"]);
 	APE.thing.ape.addTags(["ropen", "lclose"]);
+}
+function initTaunt() {
+	APE.scene.addBG(APE.thing.taunt);
+
+	APE.scene.addOBJ(APE.thing.coin, "coin");
+	APE.thing.coin.scale = 2;
+	var inst = [];
+	for(var i = 0; i < APE.coins; ++i) {
+		inst.push({
+			x: (APE.width / 2) - ((APE.coins - 1) * 50) + (i * 100),
+			y: APE.height * 3/5
+		});
+	}
+	APE.thing.coin.setInstances(inst);
+
+	var theend = false;
+	var taunts = [
+		"Shouldn't ever see this one...",
+		"What does an ape need with a gold coin?",
+		"You had one already; your greed sickens me!",
+		"Well-trained ape, collecting shiny money.",
+		"Money won't buy your escape, ape.",
+		"Monkey see, monkey accrue.",
+		"What are you, saving up for a toll tree?"
+	];
+	var str = "Finding finding funds fun?";
+	if(APE.coins < taunts.length) {
+		str = taunts[APE.coins];
+	}
+	if(APE.level >= APE.levels.length) {
+		// endings
+		theend = true;
+		APE.tally = true;
+		if(APE.coins === APE.levels.length) {
+			str = "Esc the ape failed to escape capitalism.";
+		} else if(APE.coins) {
+			str = "Esc the ape's freedom was risked for "+ APE.coins +" coins.";
+		} else {
+			str = "Esc the ape escaped, flat broke.";
+		}
+	}
+	var taunt = new penduinTEXT(str, 50, "white", false, false, true);
+	taunt.x = APE.width / 6;
+	taunt.y = APE.height * 3/4;
+	APE.scene.addTEXT(taunt);
+	if(theend) {
+		var end = new penduinTEXT("THE END", 200, "white", false, false, true);
+		end.x = APE.width / 4;
+		end.y = APE.height * 1/3;
+		APE.scene.addTEXT(end);
+	}
 }
 
 function start() {
@@ -466,6 +654,7 @@ function start() {
 	//APE.scene.showFPS(true);
 
 	changeScene("title", true);
+//	changeScene("taunt", true);
 //	changeScene("game", true);
 }
 
