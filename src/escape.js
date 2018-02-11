@@ -408,8 +408,8 @@ window.addEventListener("keydown", newInput);
 window.addEventListener("keyup", newInput);
 window.addEventListener("mousedown", newInput);
 window.addEventListener("mouseup", newInput);
-window.addEventListener("touchend", newInput);
-window.addEventListener("touchstart", newInput);
+//window.addEventListener("touchend", newInput);
+//window.addEventListener("touchstart", newInput);
 window.addEventListener("gamepadconnected", pollGamepad);
 
 /*
