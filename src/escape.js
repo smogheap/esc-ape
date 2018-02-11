@@ -490,15 +490,15 @@ function initCredits() {
 	APE.thing.escape.x = APE.width / 2;
 	APE.thing.escape.y = APE.height / 3;
 
-	var owen =    new penduinTEXT("Owen Swerkstrom - graphics, engine       ",
+	var owen =    new penduinTEXT("Owen Swerkstrom - graphics, programming",
 							   50, "white", false, false, true);
 	owen.x = APE.width * 4/16;
 	owen.y = APE.height * 10/16;
-	var micah =   new penduinTEXT("Micah N Gorrell - concept, programming   ",
+	var micah =   new penduinTEXT("Micah N Gorrell - concept",
 								50, "white", false, false, true);
 	micah.x = APE.width * 4/16;
 	micah.y = APE.height * 11/16;
-	var special = new penduinTEXT(" Special thanks : Kim Guyer  Leah Gorrell",
+	var special = new penduinTEXT("      Kim Guyer - ideas and understanding",
 								  50, "white", false, false, true);
 	special.x = APE.width * 4/16;
 	special.y = APE.height * 12/16;
