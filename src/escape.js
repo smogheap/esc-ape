@@ -423,12 +423,18 @@ function handleinput(time) {
 }
 
 function reachedGoal(x, y) {
+	if(x < 0 || x > APE.width || y < 0 || y > APE.height) {
+		return false;
+	}
 	//blue channel
 	return APE._mapData.data[((Math.floor(y * APE._mapScale) *
 							   (APE._mapData.width * 4)) +
 							  (Math.floor(x * APE._mapScale) * 4)) + 2];
 }
 function canGrab(x, y) {
+	if(x < 0 || x > APE.width || y < 0 || y > APE.height) {
+		return false;
+	}
 	//green channel
 	return APE._mapData.data[((Math.floor(y * APE._mapScale) *
 							   (APE._mapData.width * 4)) +
