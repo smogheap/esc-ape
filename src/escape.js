@@ -55,8 +55,43 @@ APE = {
 				x: 700,
 				y: 840
 			}
+		},
+		{
+			name: "lv03",
+			map: {
+				canvas: null,
+				ctx: null,
+				data: null,
+				scale: 0
+			},
+			start: {
+				x: 165,
+				y: 910
+			},
+			coin: {
+				x: 1340,
+				y: 860
+			}
+		},
+		{
+			name: "lv02",
+			map: {
+				canvas: null,
+				ctx: null,
+				data: null,
+				scale: 0
+			},
+			start: {
+				x: 120,
+				y: 890
+			},
+			coin: {
+				x: 940,
+				y: 50
+			}
 		}
-	]
+	],
+	music: null
 };
 function LOAD(json) {
 	var data = json;
@@ -147,6 +182,11 @@ function transitionEnd() {
 			break;
 		}
 		APE.transitionIn = true;
+
+		if(APE.music.paused) {
+			APE.music.currentTime = 0;
+			APE.music.play();
+		}
 	}
 	APE.transitionOut = !APE.transitionOut;
 	APE.acceptInput = APE.transitionOut;
@@ -490,17 +530,17 @@ function initCredits() {
 	APE.thing.escape.x = APE.width / 2;
 	APE.thing.escape.y = APE.height / 3;
 
-	var owen =    new penduinTEXT("Owen Swerkstrom - graphics, programming",
+	var owen =    new penduinTEXT("Owen Swerkstrom - graphics, programming, music",
 							   50, "white", false, false, true);
-	owen.x = APE.width * 4/16;
+	owen.x = APE.width * 2/16;
 	owen.y = APE.height * 10/16;
 	var micah =   new penduinTEXT("Micah N Gorrell - concept",
 								50, "white", false, false, true);
-	micah.x = APE.width * 4/16;
+	micah.x = APE.width * 2/16;
 	micah.y = APE.height * 11/16;
 	var special = new penduinTEXT("      Kim Guyer - ideas and understanding",
 								  50, "white", false, false, true);
-	special.x = APE.width * 4/16;
+	special.x = APE.width * 2/16;
 	special.y = APE.height * 12/16;
 
 	APE.scene.addTEXT(owen);
@@ -565,10 +605,10 @@ function initGame() {
 	APE._mapScale = APE.levels[APE.level].map.scale;
 	APE._coinx = APE.levels[APE.level].coin.x;
 	APE._coiny = APE.levels[APE.level].coin.y;
-	console.log(APE._mapData);
+	//console.log(APE._mapData);
 	APE.gotCoin = false;
 
-	APE.scene.addBG(APE.thing.lv01);
+	APE.scene.addBG(APE.thing[APE.levels[APE.level].name]);
 	APE.scene.addOBJ(APE.thing.ape, "ape");
 	APE.scene.addOBJ(APE.thing.coin, "coin");
 	APE.thing.ape.scale = 1;
@@ -646,7 +686,7 @@ function initTaunt() {
 }
 
 function start() {
-	console.log("start");
+	//console.log("start");
 	APE.acceptinput = true;
 	APE.scene = new penduinSCENE(APE.canvas, APE.width, APE.height,
 								 tick, 60);
@@ -655,7 +695,11 @@ function start() {
 
 	changeScene("title", true);
 //	changeScene("taunt", true);
-//	changeScene("game", true);
+	//	changeScene("game", true);
+	if(APE.music.paused) {
+		APE.music.currentTime = 0;
+		APE.music.play();
+	}
 }
 
 window.addEventListener("load", function() {
@@ -676,7 +720,7 @@ window.addEventListener("load", function() {
 										   undefined, 500);
 	// load level maps
 	APE.levels.every(function(lv) {
-		console.log(lv);
+		//console.log(lv);
 		var img = document.getElementById(lv.name);
 		lv.map.canvas = document.createElement("canvas");
 		lv.map.canvas.width = img.width;
@@ -687,6 +731,9 @@ window.addEventListener("load", function() {
 		lv.map.data = lv.map.ctx.getImageData(0, 0, img.width, img.height);
 		return true;
 	});
+
+	// hook up music
+	APE.music = document.getElementById("musicjungle");
 
 	combineCallbacks(cbs, null, start);
 });
